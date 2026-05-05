@@ -4,7 +4,7 @@ A self-hosted personal finance dashboard. All data stays on your machine — no 
 
 > **⚠ Disclaimer:** This software is for informational and organizational purposes only. It is **not** financial, investment, legal, or tax advice. The contributors are not liable for any financial losses or decisions made based on this software. See [DISCLAIMER.md](DISCLAIMER.md) for the full disclaimer. Consult a licensed financial professional before making financial decisions.
 
-![Screenshot of the dashboard showing net worth, income, expenses, and advisor recommendations]
+![Minicountant dashboard showing net worth snapshot, income vs outflow breakdown, cash flow metrics, advisor recommendations, goals progress, and household budget summary](static/screenshot.png)
 
 ## Features
 

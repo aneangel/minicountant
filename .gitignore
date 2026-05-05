@@ -34,3 +34,6 @@ ENV/
 
 # Logs
 *.log
+
+# Screenshot preview (local only)
+screenshot.html
