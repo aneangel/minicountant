@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wealth Manager</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="shell">
+  <nav>
+    <div class="logo">WEALTH MGR</div>
+    <a href="#" data-page="dashboard" class="active">Dashboard</a>
+    <a href="#" data-page="accounts">Accounts</a>
+    <a href="#" data-page="recurring">Recurring</a>
+    <a href="#" data-page="loans">Loans</a>
+    <a href="#" data-page="goals">Goals</a>
+    <a href="#" data-page="rsus">RSUs</a>
+    <a href="#" data-page="import">SimpleFIN</a>
+    <a href="#" data-page="ingest">Ingest PDF</a>
+    <a href="#" data-page="transactions">Transactions</a>
+    <a href="#" data-page="budget">Budget</a>
+  </nav>
+
+  <main>
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+
+      <!-- Row 1: Net Worth Snapshot -->
+      <div class="window">
+        <div class="window-title">Net Worth Snapshot</div>
+        <div class="window-body">
+          <div class="cards">
+            <div class="card">
+              <div class="label">Net Worth</div>
+              <div class="value" id="net-worth">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Total Assets</div>
+              <div class="value pos" id="total-assets">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Total Debt</div>
+              <div class="value neg" id="total-debt">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Liquid Cash</div>
+              <div class="value" id="liquid">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Investments</div>
+              <div class="value" id="investments">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Income + Outflow side by side -->
+      <div class="dash-flow-grid">
+        <div class="window">
+          <div class="window-title">Monthly Income <span class="window-badge pos" id="monthly-income">—</span><span style="font-size:10px;font-weight:normal;color:#666;margin-left:6px;">(primary only)</span></div>
+          <div class="window-body" id="income-panel">—</div>
+        </div>
+        <div class="window">
+          <div class="window-title">Monthly Outflow <span class="window-badge neg" id="monthly-outflow">—</span></div>
+          <div class="window-body" id="outflow-panel">—</div>
+        </div>
+      </div>
+
+      <!-- Row 3: Cash Flow Metrics -->
+      <div class="window">
+        <div class="window-body">
+          <div class="cards">
+            <div class="card">
+              <div class="label">Cash Flow</div>
+              <div class="value" id="cash-flow">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Savings Rate</div>
+              <div class="value" id="savings-rate">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Emergency Fund</div>
+              <div class="value" id="emergency-months">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Debt-to-Income</div>
+              <div class="value" id="dti">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Unvested RSU</div>
+              <div class="value pos" id="dash-rsu-pending">—</div>
+            </div>
+            <div class="card">
+              <div class="label">RSU Next 90d (net)</div>
+              <div class="value pos" id="dash-rsu-next90">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4: Advisor + Goals -->
+      <div class="dash-flow-grid">
+        <div class="window">
+          <div class="window-title">Advisor</div>
+          <div class="window-body">
+            <div class="advice-list" id="advice-list"></div>
+          </div>
+        </div>
+        <div class="window">
+          <div class="window-title">Goals</div>
+          <div class="window-body">
+            <div class="goals-grid" id="goals-dash"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 5: Household Budget Summary -->
+      <div class="window" id="dash-budget-window">
+        <div class="window-title">Household Budget
+          <span style="font-size:10px;font-weight:normal;color:#666;margin-left:8px;">
+            [<a href="#" id="dash-budget-edit-link" style="color:var(--blue);">edit budget</a>]
+          </span>
+        </div>
+        <div class="window-body" id="dash-budget-panel">
+          <div class="empty">No household budget saved yet. Go to the Budget page to set one up.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ACCOUNTS -->
+    <div class="page" id="page-accounts">
+      <div class="window">
+        <div class="window-title">Accounts</div>
+        <div class="window-body">
+          <div class="section-header">
+            <h2 style="margin:0">All Accounts</h2>
+            <button class="btn btn-primary" id="btn-add-account">Add Account</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Name</th><th>Type</th><th>Balance</th><th>APY</th><th>Institution</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="accounts-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECURRING -->
+    <div class="page" id="page-recurring">
+      <div class="window">
+        <div class="window-title">Recurring Income &amp; Expenses</div>
+        <div class="window-body">
+          <div class="section-header">
+            <h2 style="margin:0">Income <span id="recurring-income-total" style="color:var(--green);font-weight:normal;font-size:11px;"></span></h2>
+            <button class="btn btn-primary" id="btn-add-recurring">Add Item</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Category</th><th>Amount</th><th>Monthly</th><th>Actions</th></tr></thead>
+              <tbody id="income-tbody"></tbody>
+            </table>
+          </div>
+          <h2>Expenses <span id="recurring-expense-total" style="color:var(--red);font-weight:normal;font-size:11px;"></span></h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Category</th><th>Amount</th><th>Monthly</th><th>Actions</th></tr></thead>
+              <tbody id="expense-tbody"></tbody>
+            </table>
+          </div>
+
+          <hr>
+          <div class="section-header" style="margin-top:12px;">
+            <h2 style="margin:0">Detect from Imported Transactions</h2>
+            <button class="btn" onclick="scanRecurring()">Scan Transactions</button>
+          </div>
+          <div id="recurring-scan-status" style="font-size:11px;color:var(--muted);margin-bottom:6px;"></div>
+          <div id="recurring-scan-results" style="display:none;">
+            <p style="font-size:11px;color:var(--muted);margin-bottom:8px;">
+              Check items to add as recurring income/expenses. Already-existing items are hidden.
+            </p>
+            <div id="recurring-suggestions-list"></div>
+            <div style="margin-top:8px;">
+              <button class="btn btn-primary" onclick="applyRecurringSuggestions()">Add Selected</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOANS -->
+    <div class="page" id="page-loans">
+      <div class="window">
+        <div class="window-title">Loans</div>
+        <div class="window-body">
+          <div class="section-header">
+            <h2 style="margin:0">All Loans</h2>
+            <button class="btn btn-primary" id="btn-add-loan">Add Loan</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Name</th><th>Balance</th><th>Rate</th><th>Payment</th><th>Months Left</th><th>Interest Remaining</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="loans-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOALS -->
+    <div class="page" id="page-goals">
+      <div class="window">
+        <div class="window-title">Financial Goals</div>
+        <div class="window-body">
+          <div class="section-header">
+            <h2 style="margin:0">Goals</h2>
+            <button class="btn btn-primary" id="btn-add-goal">Add Goal</button>
+          </div>
+          <div class="goals-grid" id="goals-list"></div>
+        </div>
+      </div>
+
+      <!-- DEBT PAYOFF CALCULATOR -->
+      <div class="window" style="margin-top:12px;">
+        <div class="window-title">Debt-Free Calculator</div>
+        <div class="window-body">
+
+          <div class="cards" style="margin-bottom:12px;">
+            <div class="card">
+              <div class="label">Total Debt</div>
+              <div class="value neg" id="dfc-total-debt">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Min. Monthly Payments</div>
+              <div class="value" id="dfc-min-payment">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Available Cash Flow</div>
+              <div class="value pos" id="dfc-cash-flow">—</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap;">
+            <div class="form-group">
+              <label>Extra monthly payment (beyond minimums)</label>
+              <input type="number" id="dfc-extra" value="0" min="0" step="50" style="width:140px;" oninput="runDebtCalc()">
+            </div>
+            <div class="form-group">
+              <label>Strategy</label>
+              <select id="dfc-strategy" onchange="runDebtCalc()">
+                <option value="avalanche">Avalanche — highest rate first (least interest)</option>
+                <option value="snowball">Snowball — lowest balance first (fastest wins)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- RSU Payoff Section -->
+          <div id="dfc-rsu-section" style="display:none;margin-bottom:14px;border:1px solid #999;padding:10px;background:#fafafa;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+              <strong style="font-size:12px;">Apply Vested RSU Value to Debt Payoff</strong>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:normal;">
+                <input type="checkbox" id="dfc-rsu-enable" onchange="runDebtCalc()">
+                Enable RSU lump-sum payoff
+              </label>
+            </div>
+            <div class="cards" style="margin-bottom:10px;">
+              <div class="card">
+                <div class="label">Vested RSU (gross)</div>
+                <div class="value pos" id="dfc-rsu-gross">—</div>
+              </div>
+              <div class="card">
+                <div class="label">After Tax (est.)</div>
+                <div class="value pos" id="dfc-rsu-net">—</div>
+              </div>
+              <div class="card">
+                <div class="label">Applying to Debt</div>
+                <div class="value" id="dfc-rsu-applying">—</div>
+              </div>
+              <div class="card">
+                <div class="label">Remaining After Payoff</div>
+                <div class="value pos" id="dfc-rsu-leftover">—</div>
+              </div>
+            </div>
+            <div class="form-group" style="max-width:220px;">
+              <label>% of after-tax RSU to apply</label>
+              <input type="number" id="dfc-rsu-pct" value="100" min="0" max="100" step="5" oninput="runDebtCalc()">
+            </div>
+            <div id="dfc-rsu-compare" style="display:none;margin-top:10px;border-top:1px solid #ddd;padding-top:8px;">
+            </div>
+          </div>
+
+          <div id="dfc-results" style="display:none;">
+            <div class="cards" style="margin-bottom:12px;">
+              <div class="card">
+                <div class="label">Debt-Free Date</div>
+                <div class="value pos" id="dfc-free-date">—</div>
+              </div>
+              <div class="card">
+                <div class="label">Months to Freedom</div>
+                <div class="value" id="dfc-months">—</div>
+              </div>
+              <div class="card">
+                <div class="label">Total Interest Paid</div>
+                <div class="value neg" id="dfc-total-interest">—</div>
+              </div>
+              <div class="card">
+                <div class="label">vs. Minimums Only</div>
+                <div class="value pos" id="dfc-interest-saved">—</div>
+              </div>
+            </div>
+
+            <!-- Post-payoff savings analysis -->
+            <div id="dfc-freed-savings" style="margin-bottom:12px;padding:8px 10px;border:1px solid #006600;background:#f0fff0;font-size:12px;display:none;">
+            </div>
+
+            <div id="dfc-compare-banner" style="display:none;padding:6px 10px;background:#fffce8;border:1px solid #cc9900;font-size:11px;margin-bottom:10px;"></div>
+
+            <h2>Payoff Order &amp; Timeline</h2>
+            <div class="table-wrap">
+              <table id="dfc-order-table">
+                <thead><tr>
+                  <th>#</th><th>Loan</th><th>Balance</th><th>Rate</th><th>Min Payment</th><th>Payoff Month</th><th>Payoff Date</th><th>Interest Paid</th>
+                </tr></thead>
+                <tbody id="dfc-order-tbody"></tbody>
+              </table>
+            </div>
+
+            <h2 style="margin-top:14px;">Month-by-Month Schedule <span id="dfc-schedule-toggle" style="font-size:11px;font-weight:normal;color:var(--blue);cursor:pointer;margin-left:8px;" onclick="toggleDfcSchedule()">show</span></h2>
+            <div id="dfc-schedule-wrap" style="display:none;">
+              <div class="amort-table table-wrap">
+                <table>
+                  <thead><tr><th>Month</th><th>Date</th><th>Loan</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance After</th></tr></thead>
+                  <tbody id="dfc-schedule-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="dfc-no-debt" style="display:none;" class="empty">No active loans found.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RSUs -->
+    <div class="page" id="page-rsus">
+      <div class="window">
+        <div class="window-title">RSU Grants</div>
+        <div class="window-body">
+
+          <!-- Live price bar -->
+          <div id="rsu-price-bar" style="display:flex;align-items:center;gap:16px;margin-bottom:12px;padding:6px 10px;border:1px solid #999;background:#f0f0f0;font-size:12px;">
+            <span><strong id="rsu-ticker-label">NVDA</strong></span>
+            <span id="rsu-price-value" style="font-size:16px;font-weight:bold;font-family:monospace;">—</span>
+            <span id="rsu-price-change"></span>
+            <span id="rsu-price-date" style="color:#666;font-size:11px;"></span>
+            <button class="btn btn-sm" onclick="fetchNvdaPrice(true)" style="margin-left:auto;">Refresh Price</button>
+          </div>
+
+          <!-- Equity summary cards -->
+          <div class="cards" style="margin-bottom:12px;">
+            <div class="card">
+              <div class="label">Unvested Value</div>
+              <div class="value pos" id="rsu-pending-value">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Next 90 Days (net)</div>
+              <div class="value pos" id="rsu-next90-net">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Total Shares Pending</div>
+              <div class="value" id="rsu-total-pending-shares">—</div>
+            </div>
+          </div>
+
+          <!-- Upcoming vests -->
+          <div class="section-header">
+            <h2 style="margin:0">Upcoming Vests</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Company</th><th>Shares</th><th>Est. Gross</th><th>Est. Tax</th><th>Est. Net</th></tr></thead>
+              <tbody id="rsu-upcoming-tbody"></tbody>
+            </table>
+          </div>
+
+          <hr>
+
+          <!-- Grant list -->
+          <div class="section-header" style="margin-top:12px;">
+            <h2 style="margin:0">All Grants</h2>
+            <button class="btn btn-primary" id="btn-add-rsu">Add Grant</button>
+          </div>
+          <div id="rsu-grants-list"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- RSU modal -->
+    <div class="modal-bg" id="modal-rsu">
+      <div class="modal" style="width:640px;">
+        <div class="modal-titlebar">
+          <span id="modal-rsu-title">Add RSU Grant</span>
+          <button class="close-btn btn-modal-close">X</button>
+        </div>
+        <div class="modal-body">
+          <form id="form-rsu">
+            <input type="hidden" id="rsu-id">
+            <h2>Grant Details</h2>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Company</label>
+                <input id="rsu-company" required placeholder="e.g. Acme Corp">
+              </div>
+              <div class="form-group">
+                <label>Ticker</label>
+                <input id="rsu-ticker" placeholder="NVDA">
+              </div>
+              <div class="form-group">
+                <label>Broker</label>
+                <input id="rsu-broker" placeholder="Charles Schwab">
+              </div>
+              <div class="form-group">
+                <label>Grant Number</label>
+                <input id="rsu-grant-number" placeholder="G-12345">
+              </div>
+              <div class="form-group">
+                <label>Grant Date</label>
+                <input id="rsu-grant-date" type="date">
+              </div>
+              <div class="form-group">
+                <label>Grant Price (FMV)</label>
+                <input id="rsu-grant-price" type="number" step="0.01" placeholder="875.00">
+              </div>
+              <div class="form-group">
+                <label>Total Shares Granted</label>
+                <input id="rsu-shares-granted" type="number" required placeholder="100">
+              </div>
+              <div class="form-group">
+                <label>Federal Tax Withholding %</label>
+                <input id="rsu-tax-rate" type="number" step="0.1" value="22" placeholder="22">
+              </div>
+              <div class="form-group">
+                <label>Current Share Price</label>
+                <input id="rsu-current-price" type="number" step="0.01" placeholder="for valuation">
+              </div>
+              <div class="form-group" style="grid-column:span 2">
+                <label>Notes</label>
+                <textarea id="rsu-notes"></textarea>
+              </div>
+            </div>
+
+            <h2 style="margin-top:16px;">Vesting Schedule</h2>
+            <div class="table-wrap">
+              <table id="rsu-sched-table">
+                <thead>
+                  <tr><th>Vest Date</th><th>Shares</th><th>Vested</th><th>Price at Vest</th><th></th></tr>
+                </thead>
+                <tbody id="rsu-sched-tbody"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="rsuAddVestRow()">+ Add Row</button>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-modal-close">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMPORT (SimpleFIN) -->
+    <div class="page" id="page-import">
+      <div class="window">
+        <div class="window-title">SimpleFIN Connection</div>
+        <div class="window-body" id="sfin-connect-panel">
+          <p style="margin-bottom:10px;color:var(--muted);">Get your setup token from SimpleFIN Bridge (bank settings → export → SimpleFIN).</p>
+          <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+            <div class="form-group" style="flex:1;min-width:260px;">
+              <label>Setup Token (base64)</label>
+              <input id="sfin-token" placeholder="aHR0cHM6Ly8..." style="font-family:var(--font-mono);font-size:11px;">
+            </div>
+            <button class="btn btn-primary" onclick="sfinClaim()">Claim Token</button>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+            <div class="form-group" style="flex:1;min-width:260px;">
+              <label>Or paste Access URL directly</label>
+              <input id="sfin-access-url" placeholder="https://user:pass@beta-bridge.simplefin.org/..." style="font-family:var(--font-mono);font-size:11px;">
+            </div>
+            <button class="btn btn-ghost" onclick="sfinConnectDirect()">Save URL</button>
+          </div>
+          <div id="sfin-connect-msg" style="margin-top:8px;font-size:12px;"></div>
+        </div>
+      </div>
+
+      <div id="sfin-connected-panel" style="display:none;">
+        <div class="window">
+          <div class="window-title">SimpleFIN — Connected</div>
+          <div class="window-body">
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+              <button class="btn btn-primary" onclick="sfinPreview()">Fetch Accounts</button>
+              <button class="btn btn-ghost" onclick="sfinSync()">Sync Balances</button>
+              <span id="sfin-sync-msg" style="font-size:11px;color:var(--muted);"></span>
+            </div>
+            <p style="font-size:11px;color:var(--muted);margin-bottom:8px;">
+              Review each account. Rename, set type, then Import — or Ignore to skip.
+            </p>
+            <div class="table-wrap" id="sfin-accounts-wrap">
+              <table>
+                <thead><tr>
+                  <th>Institution</th><th>Raw Name</th><th>Balance</th><th>Updated</th><th>Status</th><th>Actions</th>
+                </tr></thead>
+                <tbody id="sfin-accounts-tbody"></tbody>
+              </table>
+            </div>
+            <div id="sfin-errors" style="display:none;" class="panel">
+              <h2 style="color:var(--red)">SimpleFIN Errors</h2>
+              <div id="sfin-errors-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INGEST PDF -->
+    <div class="page" id="page-ingest">
+      <div class="window">
+        <div class="window-title">Ingest Financial Documents</div>
+        <div class="window-body">
+          <p style="margin-bottom:10px;font-size:12px;color:#444;">
+            Drop a PDF or CSV — bank statement, credit card statement, RSU letter, or brokerage export.
+            Parsed locally, no third-party APIs.
+          </p>
+
+          <div class="drop-zone" id="drop-zone" onclick="document.getElementById('ingest-file').click()">
+            Click to browse or drag and drop a file here
+            <br><span style="font-size:10px;margin-top:4px;display:block;">Accepts: .pdf and .csv — bank statements, credit card statements, RSU letters, brokerage reports</span>
+          </div>
+          <input type="file" id="ingest-file" accept=".pdf,.csv" style="display:none" onchange="handleFileSelect(this)">
+
+          <div id="ingest-status" style="margin-top:8px;font-size:12px;"></div>
+          <div id="ingest-result" style="display:none;" class="ingest-result"></div>
+          <div id="ingest-actions" style="display:none;margin-top:8px;display:none;gap:8px;">
+            <button class="btn btn-primary" onclick="confirmImport()">Import to Wealth DB</button>
+            <button class="btn btn-ghost" onclick="saveIngestPatch(_lastImportId,'ingest-status')">Save Changes</button>
+            <button class="btn btn-ghost" onclick="dismissIngest()">Discard</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="window" id="ingest-history-window">
+        <div class="window-title">Import History</div>
+        <div class="window-body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>File</th><th>Type</th><th>Imported</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="ingest-history-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUDGET -->
+    <div class="page" id="page-budget">
+
+      <!-- Income -->
+      <div class="window">
+        <div class="window-title">Household Income
+          <span style="font-size:10px;font-weight:normal;color:#666;margin-left:8px;">Enter gross (pre-tax). All Bogleheads guidelines are % of gross income.</span>
+        </div>
+        <div class="window-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <fieldset style="border:1px solid #ccc;padding:10px;">
+              <legend style="font-size:11px;font-weight:bold;padding:0 4px;">
+                <input id="bdg-name1" value="Adult 1" style="border:none;border-bottom:1px solid #aaa;width:110px;font-size:12px;font-weight:bold;background:transparent;">
+              </legend>
+              <div class="form-group">
+                <label>Annual Gross Income ($)</label>
+                <input type="number" id="bdg-gross1" min="0" step="any" placeholder="120000">
+              </div>
+              <div style="font-size:11px;color:#555;margin-top:4px;">Monthly gross: <strong id="bdg-mo1" style="font-family:monospace;">—</strong></div>
+            </fieldset>
+            <fieldset style="border:1px solid #ccc;padding:10px;">
+              <legend style="font-size:11px;font-weight:bold;padding:0 4px;">
+                <input id="bdg-name2" value="Adult 2" style="border:none;border-bottom:1px solid #aaa;width:110px;font-size:12px;font-weight:bold;background:transparent;">
+              </legend>
+              <div class="form-group">
+                <label>Annual Gross Income ($)</label>
+                <input type="number" id="bdg-gross2" min="0" step="any" placeholder="80000">
+              </div>
+              <div style="font-size:11px;color:#555;margin-top:4px;">Monthly gross: <strong id="bdg-mo2" style="font-family:monospace;">—</strong></div>
+            </fieldset>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;">
+            <div class="form-group">
+              <label>Other Monthly Income (bonuses avg, side income, RSU vests, etc.)</label>
+              <input type="number" id="bdg-other-income" min="0" step="any" placeholder="0" style="width:180px;">
+            </div>
+            <div style="padding-bottom:4px;display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn btn-primary btn-sm" onclick="loadBudgetFromRecurring()">Load from Recurring Data</button>
+              <button class="btn btn-ghost btn-sm" onclick="loadBudgetFromLoans()">Load from Loans</button>
+              <button class="btn btn-ghost btn-sm" onclick="resetBudget()" style="color:var(--red);">Reset All</button>
+            </div>
+          </div>
+          <div class="cards" style="margin-top:12px;">
+            <div class="card">
+              <div class="label">Combined Monthly Gross</div>
+              <div class="value" id="bdg-combined-gross">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Combined Annual Gross</div>
+              <div class="value" id="bdg-combined-annual">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Budget Table -->
+      <div class="window" style="margin-top:0;">
+        <div class="window-title">Monthly Budget by Category</div>
+        <div class="window-body" style="padding:0;">
+          <div class="table-wrap" style="margin:0;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th style="text-align:right;width:130px;">Monthly ($)</th>
+                  <th style="text-align:right;width:110px;">Annual</th>
+                  <th style="text-align:right;width:80px;">% Gross</th>
+                  <th style="width:150px;">Guideline</th>
+                </tr>
+              </thead>
+              <tbody id="bdg-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="window" style="margin-top:0;">
+        <div class="window-title">Budget Summary</div>
+        <div class="window-body">
+          <div class="cards">
+            <div class="card">
+              <div class="label">Monthly Income</div>
+              <div class="value pos" id="bdg-s-income">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Total Expenses</div>
+              <div class="value neg" id="bdg-s-expenses">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Total Savings</div>
+              <div class="value pos" id="bdg-s-savings">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Unallocated</div>
+              <div class="value" id="bdg-s-remaining">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Savings Rate</div>
+              <div class="value" id="bdg-s-srate">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Housing %</div>
+              <div class="value" id="bdg-s-hpct">—</div>
+            </div>
+            <div class="card">
+              <div class="label">Housing+Debt DTI</div>
+              <div class="value" id="bdg-s-dti">—</div>
+            </div>
+          </div>
+
+          <h2 style="margin-top:16px;">Bogleheads Investment Priority Order (2025)</h2>
+          <p style="font-size:11px;color:#666;margin-bottom:8px;">Complete each step before moving to the next. Annual limits are per person.</p>
+          <div id="bdg-priority"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div class="page" id="page-transactions">
+      <div class="window">
+        <div class="window-title">Transactions</div>
+        <div class="window-body">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+            <select id="txn-account-filter" style="min-width:180px;" onchange="loadTransactions()">
+              <option value="">All Accounts</option>
+            </select>
+            <input id="txn-search" type="text" placeholder="Search description / category…" style="min-width:200px;flex:1;" oninput="debounceLoadTxn()">
+            <button class="btn btn-ghost" onclick="loadTransactions()">Refresh</button>
+            <span id="txn-count" style="font-size:11px;color:#666;margin-left:auto;"></span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Date</th><th>Account</th><th>Description</th><th>Category</th><th style="text-align:right">Amount</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="txn-tbody"></tbody>
+            </table>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px;" id="txn-pagination">
+            <button class="btn btn-sm btn-ghost" id="txn-prev" onclick="txnPage(-1)">◀ Prev</button>
+            <span id="txn-page-label" style="font-size:11px;color:#666;"></span>
+            <button class="btn btn-sm btn-ghost" id="txn-next" onclick="txnPage(1)">Next ▶</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="statusbar">
+    <span id="sb-networth">Net Worth: —</span>
+    <span id="sb-cashflow">Cash Flow: —</span>
+    <span id="sb-date"></span>
+    <span style="margin-left:auto;color:#999;font-size:10px;">For informational use only — not financial advice. See DISCLAIMER.md.</span>
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══════════════════════════════════════════════════ -->
+
+<!-- Account modal -->
+<div class="modal-bg" id="modal-account">
+  <div class="modal">
+    <div class="modal-titlebar">
+      <span id="modal-account-title">Add Account</span>
+      <button class="close-btn btn-modal-close">X</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-account">
+        <input type="hidden" id="acc-id">
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:span 2">
+            <label>Name</label>
+            <input id="acc-name" required placeholder="Chase Checking">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="acc-type">
+              <option value="checking">Checking</option>
+              <option value="savings">Savings</option>
+              <option value="investment">Investment</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Balance ($)</label>
+            <input id="acc-balance" type="number" step="0.01" required placeholder="5000">
+          </div>
+          <div class="form-group">
+            <label>APY (%)</label>
+            <input id="acc-apy" type="number" step="0.01" placeholder="4.5">
+          </div>
+          <div class="form-group">
+            <label>Institution</label>
+            <input id="acc-institution" placeholder="Chase">
+          </div>
+          <div class="form-group" style="grid-column:span 2">
+            <label>Notes</label>
+            <textarea id="acc-notes"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost btn-modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Recurring modal -->
+<div class="modal-bg" id="modal-recurring">
+  <div class="modal">
+    <div class="modal-titlebar">
+      <span id="modal-recurring-title">Add Recurring</span>
+      <button class="close-btn btn-modal-close">X</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-recurring">
+        <input type="hidden" id="rec-id">
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:span 2">
+            <label>Name</label>
+            <input id="rec-name" required placeholder="Rent">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="rec-kind">
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Amount ($)</label>
+            <input id="rec-amount" type="number" step="0.01" required placeholder="1500">
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <input id="rec-category" placeholder="Housing">
+          </div>
+          <div class="form-group">
+            <label>Frequency</label>
+            <select id="rec-frequency">
+              <option value="monthly">Monthly</option>
+              <option value="semimonthly">Semi-monthly (2x/mo)</option>
+              <option value="biweekly">Biweekly (every 2 wks)</option>
+              <option value="weekly">Weekly</option>
+              <option value="annual">Annual</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column:span 2">
+            <label>Notes</label>
+            <textarea id="rec-notes"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost btn-modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Loan modal -->
+<div class="modal-bg" id="modal-loan">
+  <div class="modal">
+    <div class="modal-titlebar">
+      <span id="modal-loan-title">Add Loan</span>
+      <button class="close-btn btn-modal-close">X</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-loan">
+        <input type="hidden" id="loan-id">
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:span 2">
+            <label>Name</label>
+            <input id="loan-name" required placeholder="Car Loan">
+          </div>
+          <div class="form-group">
+            <label>Current Balance ($)</label>
+            <input id="loan-balance" type="number" step="0.01" required placeholder="15000">
+          </div>
+          <div class="form-group">
+            <label>Original Balance ($)</label>
+            <input id="loan-original" type="number" step="0.01" required placeholder="20000">
+          </div>
+          <div class="form-group">
+            <label>Annual Rate (%)</label>
+            <input id="loan-rate" type="number" step="0.001" required placeholder="6.5">
+          </div>
+          <div class="form-group">
+            <label>Term (months)</label>
+            <input id="loan-term" type="number" required placeholder="60">
+          </div>
+          <div class="form-group">
+            <label>Start Date</label>
+            <input id="loan-start" type="date" required>
+          </div>
+          <div class="form-group">
+            <label>Monthly Payment ($)</label>
+            <input id="loan-payment" type="number" step="0.01" placeholder="auto-calc">
+          </div>
+          <div class="form-group" style="grid-column:span 2">
+            <label>Notes</label>
+            <textarea id="loan-notes"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost btn-modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Amortization modal -->
+<div class="modal-bg" id="modal-amort">
+  <div class="modal" style="width:650px">
+    <div class="modal-titlebar">
+      <span id="amort-title">Amortization Schedule</span>
+      <button class="close-btn btn-modal-close">X</button>
+    </div>
+    <div class="modal-body">
+      <div class="amort-table table-wrap">
+        <table>
+          <thead><tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead>
+          <tbody id="amort-tbody"></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost btn-modal-close">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Goal modal -->
+<div class="modal-bg" id="modal-goal">
+  <div class="modal" style="width:540px">
+    <div class="modal-titlebar">
+      <span id="modal-goal-title">Add Goal</span>
+      <button class="close-btn btn-modal-close">X</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-goal">
+        <input type="hidden" id="goal-id">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label>Template (auto-fills target from your data)</label>
+          <select id="goal-template" onchange="applyGoalTemplate()">
+            <option value="">-- select a template --</option>
+          </select>
+        </div>
+        <hr>
+        <div class="form-grid" style="margin-top:10px;">
+          <div class="form-group" style="grid-column:span 2">
+            <label>Goal Name</label>
+            <input id="goal-name" required placeholder="Emergency Fund">
+          </div>
+          <div class="form-group">
+            <label>Target Amount ($)</label>
+            <input id="goal-target" type="number" step="0.01" required placeholder="20000">
+          </div>
+          <div class="form-group">
+            <label>Amount Saved So Far ($)</label>
+            <input id="goal-current" type="number" step="0.01" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Target Date (optional)</label>
+            <input id="goal-date" type="date">
+          </div>
+          <div class="form-group" style="grid-column:span 2">
+            <label>Notes</label>
+            <textarea id="goal-notes"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost btn-modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- SimpleFIN map modal -->
+<div class="modal-bg" id="modal-sfin-map">
+  <div class="modal" style="width:620px">
+    <div class="modal-titlebar">
+      <span id="modal-sfin-title">Import Account</span>
+      <button class="close-btn btn-modal-close">X</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="sfin-map-id">
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:span 2">
+          <label>Account Name</label>
+          <input id="sfin-map-name" required>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="sfin-map-type">
+            <option value="checking">Checking</option>
+            <option value="savings">Savings</option>
+            <option value="investment">Investment</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>APY (%)</label>
+          <input id="sfin-map-apy" type="number" step="0.01" placeholder="0">
+        </div>
+        <div class="form-group" style="grid-column:span 2">
+          <label>Institution</label>
+          <input id="sfin-map-institution">
+        </div>
+      </div>
+      <div style="margin-top:12px;" id="sfin-recurring-section">
+        <h2>Detected Recurring Items</h2>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:8px;">Check items to import as recurring expenses/income.</p>
+        <div id="sfin-suggestions-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost btn-modal-close">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="sfinDoImport()">Import Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Transaction edit modal -->
+<div class="modal-bg" id="modal-txn">
+  <div class="modal">
+    <div class="modal-titlebar">
+      <span>Edit Transaction</span>
+      <button class="close-btn btn-modal-close">X</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="txn-edit-id">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Date</label>
+          <input id="txn-edit-date" type="date">
+        </div>
+        <div class="form-group" style="grid-column:span 2">
+          <label>Description</label>
+          <input id="txn-edit-desc" type="text">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <input id="txn-edit-cat" type="text" placeholder="e.g. Income, Food, Transfer">
+        </div>
+        <div class="form-group">
+          <label>Amount (negative = expense)</label>
+          <input id="txn-edit-amount" type="number" step="0.01">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost btn-modal-close">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveTxnEdit()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ingest review modal -->
+<div class="modal-bg" id="modal-ingest-review">
+  <div class="modal" style="width:680px">
+    <div class="modal-titlebar">
+      <span>Review Parsed Document</span>
+      <button class="close-btn btn-modal-close">X</button>
+    </div>
+    <div class="modal-body" id="ingest-review-body"></div>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+<script>
+  // Statusbar clock
+  function updateClock() {
+    document.getElementById('sb-date').textContent = new Date().toLocaleString();
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+</script>
+</body>
+</html>

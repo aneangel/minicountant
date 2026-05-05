@@ -1,0 +1,384 @@
+/* Early-2000s plain web — white, default fonts, minimal decoration */
+:root {
+  --green: #006600;
+  --red:   #cc0000;
+  --blue:  #0000cc;
+  --gray:  #999999;
+  --light: #f0f0f0;
+  --border: #cccccc;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  background: #ffffff;
+  color: #000000;
+}
+
+/* ── Layout ─────────────────────────────────────── */
+.shell { display: flex; min-height: 100vh; }
+
+nav {
+  width: 140px;
+  background: #f0f0f0;
+  border-right: 1px solid #999;
+  padding: 12px 0;
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  font-size: 13px;
+}
+
+nav .logo {
+  font-weight: bold;
+  font-size: 14px;
+  padding: 0 10px 12px;
+  border-bottom: 1px solid #999;
+  margin-bottom: 6px;
+  color: #000;
+}
+
+nav a {
+  display: block;
+  padding: 4px 10px;
+  color: var(--blue);
+  text-decoration: none;
+}
+nav a:hover    { text-decoration: underline; }
+nav a.active   { font-weight: bold; color: #000; text-decoration: none; }
+
+main {
+  margin-left: 140px;
+  padding: 16px 20px 40px;
+  flex: 1;
+  max-width: 960px;
+}
+
+/* ── Pages ───────────────────────────────────────── */
+.page { display: none; }
+.page.active { display: block; }
+
+h1 { font-size: 16px; font-weight: bold; margin-bottom: 12px; border-bottom: 1px solid #000; padding-bottom: 4px; }
+h2 { font-size: 13px; font-weight: bold; margin-bottom: 8px; margin-top: 16px; }
+
+/* ── Stat cards (plain table layout) ────────────── */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-bottom: 16px;
+  border: 1px solid #999;
+}
+.card {
+  padding: 8px 14px;
+  border-right: 1px solid #ccc;
+  min-width: 120px;
+}
+.card:last-child { border-right: none; }
+.card .label { font-size: 11px; color: #666; margin-bottom: 2px; }
+.card .value { font-size: 17px; font-weight: bold; font-family: 'Courier New', monospace; }
+
+/* ── Color ───────────────────────────────────────── */
+.pos  { color: var(--green); }
+.neg  { color: var(--red); }
+.muted { color: var(--gray); }
+
+/* ── Advisor ─────────────────────────────────────── */
+.advice-list { margin-bottom: 12px; }
+.advice-item {
+  padding: 4px 8px;
+  border-left: 3px solid #ccc;
+  margin-bottom: 4px;
+  font-size: 12px;
+  background: #fafafa;
+}
+.advice-item.high   { border-left-color: var(--red); }
+.advice-item.medium { border-left-color: #cc7700; }
+.advice-item.good   { border-left-color: var(--green); }
+.advice-item.tip    { border-left-color: #0000cc; }
+
+/* ── Progress bar ────────────────────────────────── */
+.progress {
+  background: #ddd;
+  height: 10px;
+  border: 1px solid #999;
+  margin-top: 4px;
+}
+.progress-bar {
+  height: 10px;
+  background: #006600;
+  transition: width 0.3s;
+}
+
+/* ── Tables ──────────────────────────────────────── */
+.table-wrap { margin-bottom: 12px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th {
+  background: #e8e8e8;
+  padding: 4px 8px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: bold;
+  border: 1px solid #999;
+}
+td {
+  padding: 3px 8px;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+}
+tr:nth-child(even) td { background: #f8f8f8; }
+tr:hover td { background: #ffffcc; }
+
+/* ── Badges ──────────────────────────────────────── */
+.badge {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 1px 5px;
+  border: 1px solid #999;
+  background: #eee;
+}
+.badge-income     { color: var(--green); border-color: var(--green); background: #eeffee; }
+.badge-expense    { color: var(--red);   border-color: var(--red);   background: #ffeeee; }
+.badge-checking   { color: #000066; border-color: #000099; background: #eeeeff; }
+.badge-savings    { color: var(--green); border-color: var(--green); background: #eeffee; }
+.badge-investment { color: #664400; border-color: #996600; background: #fffce8; }
+.badge-other      { color: #555; }
+
+/* ── Forms ───────────────────────────────────────── */
+.panel { border: 1px solid #999; padding: 12px; margin-bottom: 12px; background: #fafafa; }
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+.form-group { display: flex; flex-direction: column; gap: 3px; }
+label { font-size: 11px; font-weight: bold; color: #333; }
+input, select, textarea {
+  border: 1px solid #999;
+  padding: 3px 5px;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  background: #fff;
+  color: #000;
+}
+input:focus, select:focus, textarea:focus { outline: 1px solid #0000cc; }
+textarea { resize: vertical; min-height: 48px; }
+
+/* ── Buttons ─────────────────────────────────────── */
+.btn {
+  padding: 3px 12px;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  background: #e8e8e8;
+  border: 1px solid #666;
+  color: #000;
+}
+.btn:hover    { background: #d0d0d0; }
+.btn:active   { background: #c0c0c0; }
+.btn-primary  { background: #ddeeff; border-color: #0000cc; color: #000066; font-weight: bold; }
+.btn-primary:hover { background: #ccddf0; }
+.btn-danger   { color: var(--red); border-color: var(--red); background: #ffeeee; }
+.btn-sm       { padding: 1px 7px; font-size: 11px; }
+.btn-ghost    { background: #f0f0f0; }
+
+.row-actions  { display: flex; gap: 4px; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+
+/* ── Modal ───────────────────────────────────────── */
+.modal-bg {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: #ffffff;
+  border: 2px solid #666;
+  width: 500px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-titlebar {
+  background: #000080;
+  color: #fff;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-titlebar .close-btn {
+  background: #c0c0c0;
+  border: 1px solid #666;
+  font-size: 10px;
+  padding: 0 4px;
+  cursor: pointer;
+  line-height: 14px;
+  font-family: Arial, sans-serif;
+}
+.modal-body { padding: 12px; }
+.modal h2 { font-size: 12px; text-transform: none; letter-spacing: 0; margin-bottom: 8px; }
+.modal-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #ccc;
+}
+
+/* ── Goals ───────────────────────────────────────── */
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.goal-card {
+  border: 1px solid #999;
+  padding: 8px;
+  background: #fafafa;
+}
+.goal-card .name   { font-weight: bold; margin-bottom: 4px; font-size: 12px; }
+.goal-card .amounts {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #666;
+  margin-top: 3px;
+}
+
+/* ── Amortization ────────────────────────────────── */
+.amort-table { max-height: 360px; overflow-y: auto; }
+
+/* ── Drop zone ───────────────────────────────────── */
+.drop-zone {
+  border: 2px dashed #999;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: #666;
+  background: #fafafa;
+}
+.drop-zone:hover, .drop-zone.drag-over { border-color: #0000cc; color: #000066; background: #eeeeff; }
+.drop-zone .drop-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+
+/* ── Ingest ──────────────────────────────────────── */
+.ingest-result {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 12px;
+  background: #fafafa;
+}
+.doc-type-badge {
+  display: inline-block;
+  background: #000080;
+  color: #fff;
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+.parsed-field { margin-bottom: 3px; }
+.parsed-field .key { font-weight: bold; display: inline-block; width: 150px; color: #333; }
+.status-processing { color: #000080; font-style: italic; }
+.status-done       { color: var(--green); font-weight: bold; }
+.status-error      { color: var(--red); font-weight: bold; }
+
+/* ── Groupbox ────────────────────────────────────── */
+.groupbox {
+  border: 1px solid #999;
+  padding: 10px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.groupbox-label {
+  position: absolute;
+  top: -8px; left: 8px;
+  background: #fff;
+  padding: 0 4px;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+/* ── Statusbar ───────────────────────────────────── */
+.statusbar {
+  position: fixed;
+  bottom: 0; left: 140px; right: 0;
+  background: #f0f0f0;
+  border-top: 1px solid #999;
+  padding: 2px 10px;
+  font-size: 11px;
+  color: #333;
+  display: flex;
+  gap: 16px;
+}
+
+.empty { color: #999; font-style: italic; padding: 12px; text-align: center; }
+
+/* ── Missing fields form ─────────────────────────── */
+.missing-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.missing-field label {
+  width: 140px;
+  flex-shrink: 0;
+}
+.missing-field input, .missing-field select {
+  flex: 1;
+}
+
+hr { border: none; border-top: 1px solid #ccc; margin: 12px 0; }
+
+/* ── Budget calculator ───────────────────────────── */
+#bdg-tbody tr td input[type=number] { border-color: #bbb; }
+#bdg-tbody tr:hover td { background: inherit; }  /* override table hover on budget rows */
+#budget-table thead th { position: sticky; top: 0; z-index: 1; }
+
+/* ── Dashboard flow grid ─────────────────────────── */
+.dash-flow-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.dash-flow-grid .window { margin-bottom: 0; }
+
+.window-badge {
+  font-size: 15px;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+/* ── Section header between card groups ─────────── */
+.bd-section {
+  font-weight: bold;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #444;
+  letter-spacing: 0.5px;
+  margin: 14px 0 6px;
+  padding-bottom: 3px;
+  border-bottom: 2px solid #999;
+}
+.bd-section:first-child { margin-top: 0; }
+
+/* ── Card enhancements for dashboard breakdowns ──── */
+.card-sub     { font-size: 10px; color: #666; margin-top: 3px; }
+.card-items   { margin-top: 6px; padding-top: 4px; border-top: 1px dotted #ddd; }
+.card-item    { display: flex; justify-content: space-between;
+                font-size: 10px; color: #555; padding: 1px 0; }
+.card-item span:last-child { font-family: 'Courier New', monospace; white-space: nowrap; }
+.card-summary { background: #f5f5f5; font-weight: bold; }
+.card .value  { font-size: 15px; }
