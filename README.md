@@ -27,7 +27,44 @@ A self-hosted personal finance dashboard. All data stays on your machine — no 
 | Frontend | Vanilla JS · HTML · CSS (no frameworks, no build step) |
 | Storage  | Single SQLite file at `~/.wealth/wealth.db` |
 
-## Quick Start
+## Getting Started
+
+### Option 1 — Download a pre-built binary (recommended)
+
+Go to the [Releases page](https://github.com/aneangel/minicountant/releases) and download the binary for your platform:
+
+| Platform | File |
+|---|---|
+| macOS — Apple Silicon (M1/M2/M3/M4) | `Minicountant-macos-arm64.dmg` |
+| macOS — Intel | `Minicountant-macos-x86_64.dmg` |
+| Linux — x86_64 | `minicountant-linux-x86_64` |
+| Linux — ARM64 | `minicountant-linux-arm64` |
+| Windows | `minicountant-windows-x86_64.exe` |
+
+**macOS:** Open the DMG, drag `Minicountant.app` to your Applications folder, then double-click it. If macOS blocks it on first launch (Gatekeeper), right-click the app → Open.
+
+**Linux:** Requires WebKit2GTK (the system browser engine — most desktop Linux installs already have it):
+```bash
+# Ubuntu / Debian
+sudo apt install python3-gi gir1.2-webkit2-4.0
+
+# Fedora
+sudo dnf install python3-gobject webkit2gtk4.0
+
+# Arch
+sudo pacman -S python-gobject webkit2gtk
+```
+Then run the binary:
+```bash
+chmod +x minicountant-linux-x86_64
+./minicountant-linux-x86_64
+```
+
+**Windows:** Double-click `minicountant-windows-x86_64.exe`. Requires Edge WebView2, which is pre-installed on Windows 10 (1803+) and Windows 11.
+
+---
+
+### Option 2 — Run from source
 
 **Requirements:** Python 3.10+
 
@@ -35,18 +72,20 @@ A self-hosted personal finance dashboard. All data stays on your machine — no 
 # 1. Clone
 git clone https://github.com/aneangel/minicountant.git
 cd minicountant
+
 # 2. Create and activate a virtual environment
 python3 -m venv .venv
-source .venv/bin/activate      # Windows: .venv\Scripts\activate
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
 
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Run
-./run.sh                        # or: uvicorn main:app --host 127.0.0.1 --port 8765 --reload
-```
+# 4a. Launch as a desktop app (no browser needed)
+python desktop.py
 
-Open [http://localhost:8765](http://localhost:8765) in your browser.
+# 4b. Or run as a local web server and open in your browser
+./run.sh                         # then open http://localhost:8765
+```
 
 The SQLite database is created automatically at `~/.wealth/wealth.db` on first run. No migrations or setup scripts needed.
 
@@ -69,11 +108,17 @@ sqlite3 ~/.wealth/wealth.db "INSERT OR REPLACE INTO config(key,value) VALUES('al
 ## Project Structure
 
 ```
-wealth/
-├── main.py                  # FastAPI app entry point
+minicountant/
+├── desktop.py               # Desktop app entry point (pywebview + uvicorn)
+├── main.py                  # FastAPI app
 ├── database.py              # SQLite schema + migrations
-├── run.sh                   # Dev server launcher
-├── requirements.txt
+├── run.sh                   # Dev web-server launcher (browser-based)
+├── build.sh                 # Local desktop build script
+├── minicountant.spec        # PyInstaller build spec
+├── requirements.txt         # Runtime dependencies
+├── requirements-build.txt   # Build-only dependencies (PyInstaller)
+├── .github/workflows/
+│   └── build.yml            # CI: builds binaries for all platforms on tag push
 ├── routers/
 │   ├── accounts.py          # Account CRUD
 │   ├── budget.py            # Budget persistence (save/load)
@@ -86,10 +131,27 @@ wealth/
 │   ├── simplefin.py         # SimpleFIN bank sync
 │   └── transactions.py      # Transaction search + edit
 ├── static/
-│   ├── app.js               # All frontend logic (single file, no build)
-│   └── style.css            # Early-2000s plain-web aesthetic
+│   ├── app.js               # All frontend logic (single file, no build step)
+│   └── style.css
 └── templates/
     └── index.html           # Single-page app shell
+```
+
+## Building from Source
+
+To produce a native binary on your own machine:
+
+```bash
+./build.sh
+```
+
+Output lands in `dist/`. On macOS this produces `Minicountant.app`; on Linux and Windows it produces a single executable named `minicountant`.
+
+To produce release binaries for all platforms, push a version tag and GitHub Actions handles the rest:
+
+```bash
+git tag v1.2.0
+git push origin v1.2.0
 ```
 
 ## Data & Privacy
