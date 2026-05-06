@@ -170,6 +170,10 @@ The dashboard separates income into **primary** (marked `category = "primary"` i
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Notice of AI Use
+
+Claude works in conjunction in helping build the github workflow actions and pipeline to build releases (my expertise in this area is very little so it is helping doing a lot of the heavy lifting in bring-up the github workflow pipeline)
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
